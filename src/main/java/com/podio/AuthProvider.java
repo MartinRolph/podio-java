@@ -21,10 +21,16 @@ public class AuthProvider {
 
 	public AuthProvider(ResourceFactory baseAPI,
 			OAuthClientCredentials clientCredentials,
-			OAuthUserCredentials userCredentials) {
+			OAuthUserCredentials userCredentials, OAuthToken token) {
 		this.clientCredentials = clientCredentials;
 		this.userCredentials = userCredentials;
 		this.oauthAPI = new OAuthAPI(baseAPI);
+		this.token = token;
+	}
+	public AuthProvider(ResourceFactory baseAPI,
+			OAuthClientCredentials clientCredentials,
+			OAuthUserCredentials userCredentials) {
+		this(baseAPI, clientCredentials, userCredentials, null);
 	}
 
 	private void updateToken(OAuthUserCredentials credentials) {
@@ -42,6 +48,10 @@ public class AuthProvider {
 				this.token.getRefreshToken()));
 	}
 
+	public void setToken(OAuthToken token) {
+		this.token = token;
+	}
+	
 	public synchronized OAuthToken getToken() {
 		if (token == null) {
 			newToken();

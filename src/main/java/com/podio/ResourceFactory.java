@@ -18,6 +18,7 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.podio.oauth.OAuthClientCredentials;
+import com.podio.oauth.OAuthToken;
 import com.podio.oauth.OAuthUserCredentials;
 import com.podio.serialize.DateTimeDeserializer;
 import com.podio.serialize.DateTimeSerializer;
@@ -47,14 +48,18 @@ public final class ResourceFactory {
 
 	public ResourceFactory(OAuthClientCredentials clientCredentials,
 			OAuthUserCredentials userCredentials) {
+		this(clientCredentials, userCredentials, null);
+	}
+	public ResourceFactory(OAuthClientCredentials clientCredentials,
+			OAuthUserCredentials userCredentials, OAuthToken token) {
 		this("api.podio.com", "file.podio.com", 443, true, false,
-				clientCredentials, userCredentials);
+				clientCredentials, userCredentials, token);
 	}
 
 	public ResourceFactory(String apiHostname, String fileHostname, int port,
 			boolean ssl, boolean dryRun,
 			OAuthClientCredentials clientCredentials,
-			OAuthUserCredentials userCredentials) {
+			OAuthUserCredentials userCredentials, OAuthToken token) {
 		ClientConfig config = new DefaultClientConfig();
 		config.getSingletons().add(getJsonProvider());
 		config.getClasses().add(MultiPartWriter.class);
@@ -71,11 +76,21 @@ public final class ResourceFactory {
 		this.fileResource = client.resource(getURI(fileHostname, port, ssl));
 		fileResource.header(HttpHeaders.USER_AGENT, "Podio Java API Client");
 
-		AuthProvider authProvider = new AuthProvider(this, clientCredentials,
-				userCredentials);
+		AuthProvider authProvider = new AuthProvider(this, clientCredentials,userCredentials, token);
+	
 		this.loginFilter = new LoginFilter(authProvider);
 	}
-
+	public ResourceFactory(String apiHostname, String fileHostname, int port,
+			boolean ssl, boolean dryRun,
+			OAuthClientCredentials clientCredentials,
+			OAuthUserCredentials userCredentials) {
+		this(apiHostname, fileHostname, port,
+				ssl,  dryRun,
+				clientCredentials,
+				userCredentials, null);
+		
+		
+	}
 	private URI getURI(String hostname, int port, boolean ssl) {
 		try {
 			return new URI(ssl ? "https" : "http", null, hostname, port, null,

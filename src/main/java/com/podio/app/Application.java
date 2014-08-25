@@ -1,12 +1,18 @@
 package com.podio.app;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 @JsonAutoDetect()
-public class Application {
+public class Application implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -965815016988677775L;
 
 	/**
 	 * The id of the app

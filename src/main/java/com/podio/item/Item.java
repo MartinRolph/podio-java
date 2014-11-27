@@ -9,12 +9,13 @@ import org.codehaus.jackson.map.annotate.JsonDeserialize;
 
 import com.podio.app.Application;
 import com.podio.comment.Comment;
+import com.podio.common.CreatedBase;
 import com.podio.file.File;
 import com.podio.rating.RatingType;
 import com.podio.rating.RatingTypeKeyDeserializer;
 import com.podio.rating.RatingValuesMap;
 
-public class Item implements Serializable {
+public class Item extends CreatedBase implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 

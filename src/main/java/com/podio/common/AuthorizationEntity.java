@@ -5,6 +5,8 @@ import java.net.URL;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
+import com.podio.file.File;
+
 public class AuthorizationEntity implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -20,6 +22,9 @@ public class AuthorizationEntity implements Serializable {
 	private String name;
 
 	private URL url;
+	
+	private File image;
+	
 
 	public AuthorizationEntityType getType() {
 		return type;
@@ -65,6 +70,15 @@ public class AuthorizationEntity implements Serializable {
 
 	public URL getUrl() {
 		return url;
+	}
+	
+
+	public File getImage() {
+		return image;
+	}
+
+	public void setImage(File image) {
+		this.image = image;
 	}
 
 	public void setUrl(URL url) {

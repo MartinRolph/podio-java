@@ -20,12 +20,13 @@ import com.sun.jersey.api.client.WebResource.Builder;
 import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataMultiPart;
 import com.sun.jersey.multipart.file.FileDataBodyPart;
+import com.sun.jersey.multipart.file.StreamDataBodyPart;
 
 public class FileAPI extends BaseAPI {
 
 	public FileAPI(ResourceFactory resourceFactory) {
 		super(resourceFactory);
-	}
+	} 
 
 	/**
 	 * Downloads the file and saves it to given file
@@ -48,11 +49,33 @@ public class FileAPI extends BaseAPI {
 		FileUtils.writeByteArrayToFile(target, data);
 	}
 
+	// java.lang.String name, java.io.InputStream streamEntity, java.lang.String
+	// filename, MediaType mediaType)
+	public int uploadFile(String name, InputStream streamEntity, MediaType mediaType) {
+				
+		FormDataMultiPart multiPart = new FormDataMultiPart();
+		StreamDataBodyPart filePart = new StreamDataBodyPart("source", streamEntity, name, mediaType);
+		
+		FormDataContentDisposition.FormDataContentDispositionBuilder builder = FormDataContentDisposition
+				.name(filePart.getName());
+		builder.fileName(name);
+		//builder.size(file.length());
+		
+		multiPart.bodyPart(filePart);
+		multiPart.field("filename", name);
+
+		Builder resource = getResourceFactory().getApiResource("/file/")
+				.entity(multiPart,
+						new MediaType("multipart", "form-data")); //, Collections.singletonMap("boundary", "AaB03x")
+		return resource.post(File.class).getId();
+	}
+
 	/**
 	 * Uploads the file to the API
 	 */
 	public int uploadFile(String name, java.io.File file) {
 		FileDataBodyPart filePart = new FileDataBodyPart("source", file);
+		StreamDataBodyPart tmp = new StreamDataBodyPart();
 		// Work around for bug in cherrypy
 		FormDataContentDisposition.FormDataContentDispositionBuilder builder = FormDataContentDisposition
 				.name(filePart.getName());
@@ -64,7 +87,7 @@ public class FileAPI extends BaseAPI {
 		multiPart.bodyPart(filePart);
 		multiPart.field("filename", name);
 
-		Builder resource = getResourceFactory().getApiResource("/file/v2/")
+		Builder resource = getResourceFactory().getApiResource("/file/")
 				.entity(multiPart,
 						new MediaType("multipart", "form-data", Collections
 								.singletonMap("boundary", "AaB03x")));
